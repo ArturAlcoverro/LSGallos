@@ -18,4 +18,8 @@ public class Rapper {
         this.level = level;
         this.photo = photo;
     }
+
+    public String getStageName() {
+        return stageName;
+    }
 }

@@ -63,5 +63,14 @@ public class CompetitionDAO {
         this.competition.addRapper(rapper);
         save();
     }
+
+    @Override
+    public String toString() {
+        return this.competition.toString();
+    }
+
+    public Competition getCompetition() {
+        return competition;
+    }
 }
 
