@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 public class CompetitionDAO {
 
@@ -67,6 +68,34 @@ public class CompetitionDAO {
     @Override
     public String toString() {
         return this.competition.toString();
+    }
+
+    public boolean validateRapper(Rapper rapper){
+        return this.competition.validateRapper(rapper);
+    }
+
+    public boolean validateLog(String name){
+        return this.competition.validateLog(name);
+    }
+
+    public void showRanking(){
+        this.competition.showRanking();
+    }
+
+    public Date getStartDate(){
+        return this.competition.getStartDate();
+    }
+
+    public Date getEndDate(){
+        return this.competition.getEndDate();
+    }
+
+    public String getName(){
+        return this.competition.getName();
+    }
+
+    public int getPhaseSize(){
+        return this.competition.getPhaseSize();
     }
 
     public Competition getCompetition() {

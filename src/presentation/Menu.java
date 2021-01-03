@@ -3,6 +3,7 @@ package presentation;
 import business.Rapper;
 import persistance.CompetitionDAO;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
@@ -15,6 +16,7 @@ public class Menu {
     public Menu(){
         sc = new Scanner(System.in);
     }
+
     public int printMenuRegister(){
         System.out.println("The competition hasn’t started yet. Do you want to:\n");
         System.out.print("1. Register\n2. Leave\n\nChoose an option: ");
@@ -27,6 +29,7 @@ public class Menu {
         chooseOption();
         return this.option;
     }
+
     public void printMenuFinal(){}
 
     public void chooseOption(){
@@ -38,7 +41,7 @@ public class Menu {
         System.out.print(dao.toString());
     }
 
-    public void Registration(CompetitionDAO dao) throws ParseException {
+    public void Registration(CompetitionDAO dao) throws ParseException, IOException {
         System.out.println("\n-----------------------------------------------------------------------");
         System.out.println("Please, enter your personal information: ");
         System.out.print("- Full name: ");
@@ -56,13 +59,26 @@ public class Menu {
         String url = sc.nextLine();
 
         Rapper rapper = new Rapper(name, artistic, new SimpleDateFormat("dd/MM/yyyy").parse(date), country, level, url);
-        if(dao.getCompetition().validateRapper(rapper)){
+        if(dao.validateRapper(rapper)){
             System.out.println("\nRegistration Complete!");
-            //guardar el rapero al JSON
+            dao.addRapper(rapper);
         }else{
             System.out.println("\nRegistration not valid!");
         }
         System.out.println("-----------------------------------------------------------------------");
 
+    }
+
+    public void login(CompetitionDAO dao){
+        boolean valid = true;
+        do{
+            System.out.print("Enter your artístic name: ");
+            String name = sc.nextLine();
+            if(!dao.validateLog(name)){
+                System.out.println("Bro, there's no \"" + name + "\" on ma' list.");
+            }else{
+                valid = false;
+            }
+        }while(valid);
     }
 }

@@ -9,6 +9,7 @@ public class Rapper {
     private String nationality;
     private int level;
     private String photo;
+    private int score;
 
     public Rapper(String realName, String stageName, Date birth, String nationality, int level, String photo) {
         this.realName = realName;
@@ -17,9 +18,18 @@ public class Rapper {
         this.nationality = nationality;
         this.level = level;
         this.photo = photo;
+        this.score = 0;
     }
 
     public String getStageName() {
         return stageName;
+    }
+
+    public Date getBirth() {
+        return birth;
+    }
+
+    public int getScore() {
+        return score;
     }
 }

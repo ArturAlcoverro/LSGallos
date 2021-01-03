@@ -25,7 +25,10 @@ public class Competition {
     }
 
     public boolean validateRapper(Rapper rapper){
-        //faltar comprovar en la mateixa funció que la data de naixement es valida i que el pais existeis API
+        //faltar comprovar el pais existeis API
+        if(rapper.getBirth().after(new Date())){
+            return false;
+        }
         for (int i = 0; i < this.rappers.size(); i++) {
             if(rapper.getStageName().equals(this.rappers.get(i).getStageName())){
                 return false;
@@ -33,12 +36,38 @@ public class Competition {
         }
         return true;
     }
+
+    public boolean validateLog(String name){
+        for (int i = 0; i < this.rappers.size(); i++) {
+            if(name.equals(this.rappers.get(i).getStageName())){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public void showRanking(){
+        for (int i = 0; i < this.rappers.size(); i++) {
+            System.out.print("  " + (i+1));
+            System.out.print(" \t\t" + this.rappers.get(i).getStageName());
+            System.out.println("\t\t\t\t\t\t" + this.rappers.get(i).getScore());
+        }
+    }
+
     public Date getStartDate() {
         return startDate;
     }
 
     public Date getEndDate() {
         return endDate;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPhaseSize(){
+        return this.phases.size();
     }
 
     @Override
