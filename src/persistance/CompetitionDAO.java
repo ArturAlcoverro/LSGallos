@@ -1,13 +1,18 @@
 package persistance;
 
 import business.Competition;
+import business.Country;
 import business.Phase;
 import business.Rapper;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.BufferedReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,6 +65,59 @@ public class CompetitionDAO {
         Files.writeString(this.path, gson.toJson(json));
     }
 
+    public Country getInfoCountry(String nationality) throws IOException{
+        String url = "https://restcountries.eu/rest/v2/name/" + nationality;
+        url = removeSpace(url);
+        //System.out.println(url);
+        URL urlRequest = new URL(url);
+        String readLine = null;
+        HttpURLConnection connection = (HttpURLConnection) urlRequest.openConnection();
+        connection.setRequestMethod("GET");
+        int responseCode = connection.getResponseCode();
+
+        if(responseCode == HttpURLConnection.HTTP_OK){
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream()));
+            StringBuffer response = new StringBuffer();
+            while ((readLine = in .readLine()) != null){
+                response.append(readLine);
+            }in .close();
+
+            //System.out.println(response.toString());
+            String data = response.toString();
+            JsonElement element = JsonParser.parseString(data);
+            JsonArray array = element.getAsJsonArray();
+            JsonArray arrayLanguages = array.get(0).getAsJsonObject().get("languages").getAsJsonArray();
+            ArrayList<String> languages = new ArrayList<>();
+            for (int i = 0; i < arrayLanguages.size(); i++) {
+                languages.add(arrayLanguages.get(i).getAsJsonObject().get("name").getAsString());
+                //System.out.println(languages.get(i));
+            }
+            Country country = new Country(
+                    array.get(0).getAsJsonObject().get("name").getAsString(),
+                    array.get(0).getAsJsonObject().get("flag").getAsString(),
+                    languages
+            );
+            return country;
+        }else{
+            System.out.println("Getting the information form the RESTapi is not working.");
+        }
+        return null;
+    }
+
+    public String removeSpace(String s) {
+        String withoutspaces = "";
+        String replace = "%20";
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) != ' '){
+                withoutspaces += s.charAt(i);
+            }else{
+                withoutspaces += replace;
+            }
+        }
+        return withoutspaces;
+    }
+
     public void addRapper(Rapper rapper) throws IOException {
         this.competition.addRapper(rapper);
         save();
@@ -78,8 +136,20 @@ public class CompetitionDAO {
         return this.competition.validateLog(name);
     }
 
-    public void showRanking(){
-        this.competition.showRanking();
+    public void showRanking(Rapper you){
+        this.competition.showRanking(you);
+    }
+
+    public Rapper getMyRapper(String name){
+        return this.competition.getMyRapper(name);
+    }
+
+    public Rapper getRapper(String name){
+        return this.competition.getRapper(name);
+    }
+
+    public void getChampion(){
+        this.competition.getChampion();
     }
 
     public Date getStartDate(){

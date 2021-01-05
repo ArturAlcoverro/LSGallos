@@ -46,12 +46,43 @@ public class Competition {
         return false;
     }
     
-    public void showRanking(){
+    public void showRanking(Rapper you){
+        //ordenar abans l'array en funció del atribut score abans de fer tot el ranking
+        Object[][] table = new String[this.rappers.size()][];
         for (int i = 0; i < this.rappers.size(); i++) {
-            System.out.print("  " + (i+1));
-            System.out.print(" \t\t" + this.rappers.get(i).getStageName());
-            System.out.println("\t\t\t\t\t\t" + this.rappers.get(i).getScore());
+            if(you.getStageName().equals(this.rappers.get(i).getStageName())){
+                table[i] = new String[] {String.valueOf((i+1)), this.rappers.get(i).getStageName() + " (you)", String.valueOf(this.rappers.get(i).getScore())};
+            }else{
+                table[i] = new String[] {String.valueOf((i+1)), this.rappers.get(i).getStageName(), String.valueOf(this.rappers.get(i).getScore())};
+            }
         }
+        for (final Object[] row : table) {
+            System.out.format("  %-7s%-25s%-15s\n", row);
+
+        }
+    }
+
+    public Rapper getMyRapper(String name){
+        for (Rapper rapper: this.rappers) {
+            if(name.equals(rapper.getStageName())){
+                return rapper;
+            }
+        }
+        return null;
+    }
+
+    public Rapper getRapper(String name){
+        for (Rapper rapper: this.rappers) {
+            if(name.equals(rapper.getStageName()) || name.equals(rapper.getRealName())){
+                return rapper;
+            }
+        }
+        return null;
+    }
+
+    public void getChampion(){
+        //ordenar array rappers en funció score per acaba dassegurar
+        System.out.println("The finalist of the competition: " + name + " is the rapper: " + this.rappers.get(0).getStageName() + " with a Score of: " + this.rappers.get(0).getScore() + " points");
     }
 
     public Date getStartDate() {

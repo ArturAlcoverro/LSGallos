@@ -69,16 +69,16 @@ public class Menu {
 
     }
 
-    public void login(CompetitionDAO dao){
-        boolean valid = true;
+    public Rapper login(CompetitionDAO dao){
         do{
             System.out.print("Enter your artístic name: ");
             String name = sc.nextLine();
             if(!dao.validateLog(name)){
                 System.out.println("Bro, there's no \"" + name + "\" on ma' list.");
             }else{
-                valid = false;
+                Rapper you = dao.getMyRapper(name);
+                return you;
             }
-        }while(valid);
+        }while(true);
     }
 }

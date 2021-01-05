@@ -23,45 +23,50 @@ public class Main {
 
         menu.printCompetiton(dao);
         if(date.before(dao.getStartDate())){
-            option = menu.printMenuRegister();
-            switch (option){
-                case 1:
-                    menu.Registration(dao);
-                    break;
-                case 2:
-                    //option leaves
-                    break;
-            }
+            do {
+                option = menu.printMenuRegister();
+                switch (option) {
+                    case 1:
+                        menu.Registration(dao);
+                        break;
+                    case 2:
+                        //option leaves
+                        break;
+                }
+            }while(option!=2);
         }else if(date.after(dao.getStartDate()) && date.before(dao.getEndDate())){
             option = menu.printMenuLogin();
-            switch (option){
+            switch (option) {
                 case 1:
-                    menu.login(dao);
-                    option = lobby.showLobby(dao);
-                    switch (option){
-                        case 1:
-                            if(lobby.getContPhase() > dao.getPhaseSize()){
-                                System.out.println("Competition ended. You can't battle anyone else!");
-                            }else{
-                                //fer tot el tema batalles i tal
-                                lobby.incrementPhase();
-                            }
-                            break;
-                        case 2:
-                            lobby.showRanking(dao);
-                            break;
-                        case 3:
-                            break;
-                        case 4:
-                            break;
-                    }
+                    Rapper you = menu.login(dao);
+                    do{
+                        option = lobby.showLobby(dao);
+                        switch (option) {
+                            case 1:
+                                if (lobby.getContPhase() > dao.getPhaseSize()) {
+                                    System.out.println("Competition ended. You can't battle anyone else!");
+                                } else {
+                                    //fer tot el tema batalles i tal
+                                    lobby.incrementPhase();
+                                }
+                                break;
+                            case 2:
+                                lobby.showRanking(dao, you);
+                                break;
+                            case 3:
+                                lobby.profile(dao);
+                                break;
+                            case 4:
+                                break;
+                        }
+                    }while(option!=4);
                     break;
                 case 2:
                     //options leaves
                     break;
             }
         }else{
-            //mostrar qui ha guanyat el torneig i dona l'opcio per sortir
+            dao.getChampion();
         }
 
     }

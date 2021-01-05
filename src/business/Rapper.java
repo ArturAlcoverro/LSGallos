@@ -1,5 +1,7 @@
 package business;
 
+import edu.salleurl.profile.Profileable;
+
 import java.util.Date;
 
 public class Rapper {
@@ -31,5 +33,17 @@ public class Rapper {
 
     public int getScore() {
         return score;
+    }
+
+    public String getRealName() {
+        return realName;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public String getPhoto() {
+        return photo;
     }
 }
