@@ -13,12 +13,11 @@ import java.util.HashMap;
 
 public class ThemesDAO {
     private Path path;
-    private Gson gson;
     private ArrayList<Theme> themes;
 
     public ThemesDAO(String path) throws IOException{
         themes = new ArrayList<>();
-        gson = new Gson();
+        Gson gson = new Gson();
         this.path = Paths.get(path);
 
         JsonObject json = JsonParser.parseString(Files.readString(this.path)).getAsJsonObject();
@@ -28,10 +27,8 @@ public class ThemesDAO {
             HashMap<String, ArrayList<String>> rhymes = new HashMap<>();
             JsonArray array_rhymes = array.get(i).getAsJsonObject().get("rhymes").getAsJsonArray();
 
-            ArrayList<String> sentences = new ArrayList<>(Arrays.asList(gson.fromJson(array_rhymes.get(0).getAsJsonObject().get("1").getAsJsonArray(), String[].class)));
-            rhymes.put("1", sentences);
-            sentences = new ArrayList<>(Arrays.asList(gson.fromJson(array_rhymes.get(0).getAsJsonObject().get("2").getAsJsonArray(), String[].class)));
-            rhymes.put("2", sentences);
+            rhymes.put("1", new ArrayList<>(Arrays.asList(gson.fromJson(array_rhymes.get(0).getAsJsonObject().get("1").getAsJsonArray(), String[].class))));
+            rhymes.put("2", new ArrayList<>(Arrays.asList(gson.fromJson(array_rhymes.get(0).getAsJsonObject().get("2").getAsJsonArray(), String[].class))));
 
             themes.add(new Theme(array.get(i).getAsJsonObject().get("name").getAsString(), rhymes));
         }

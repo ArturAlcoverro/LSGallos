@@ -1,5 +1,6 @@
 package presentation;
 
+import business.Competition;
 import business.Country;
 import business.Rapper;
 import edu.salleurl.profile.Profile;
@@ -14,38 +15,38 @@ import java.util.Scanner;
 
 public class Lobby {
     private int contPhase;
-    private int option;
-    private Scanner sc;
+    private Scanner scanner;
+    private Competition competition;
 
-    public Lobby(){
-        sc = new Scanner(System.in);
+    public Lobby(Competition competition){
+        this.competition = competition;
+        scanner = new Scanner(System.in);
         this.contPhase = 1;
     }
 
     public int showLobby(CompetitionDAO dao){
         System.out.println("-------------------------------------------------------------------------");
-        System.out.println("| "+ dao.getName() + " | Phase " + this.contPhase + "/" + dao.getPhaseSize() + " | Score: " + " | Next battle: ");
+        System.out.println("| "+ competition.getName() + " | Phase " + this.contPhase + "/" + competition.getPhaseSize() + " | Score: " + " | Next battle: ");
         System.out.println("-------------------------------------------------------------------------");
-        if(this.contPhase > dao.getPhaseSize()){
+        if(this.contPhase > competition.getPhaseSize()){
             System.out.print("1. Start the battle (deactivated)\n2. Show ranking\n3. Create profile\n4. Leave competition\n\nChoose an option: ");
         }else{
             System.out.print("1. Start the battle\n2. Show ranking\n3. Create profile\n4. Leave competition\n\nChoose an option: ");
         }
-        chooseOption();
-        return this.option;
+        return chooseOption();
     }
 
     public void showRanking(CompetitionDAO dao, Rapper you){
         System.out.println("--------------------------------------");
         System.out.println("| Pos. | Name\t\t\t\t | Score |");
         System.out.println("--------------------------------------");
-        dao.showRanking(you);
+        competition.showRanking(you);
     }
 
     public void profile(CompetitionDAO dao) throws IOException {
         System.out.print("Enter the name of the rapper: ");
-        String name = sc.nextLine();
-        Rapper rapper = dao.getRapper(name);
+        String name = scanner.nextLine();
+        Rapper rapper = competition.getRapper(name);
         System.out.println("Getting the information about their country of origin (" + rapper.getNationality() + ")...");
         Country country = dao.getInfoCountry(rapper.getNationality());
         System.out.println("Generating HTML file...");
@@ -55,7 +56,6 @@ public class Lobby {
 
     public void generateHtml(Country country, Rapper rapper) throws IOException {
         File htmlTemplateFile = new File("data/HTML/trueno.html");
-        ProfileFactory factory = new ProfileFactory();
         Profileable profileable = new Profileable() {
             @Override
             public String getName() {
@@ -77,7 +77,7 @@ public class Lobby {
                 return rapper.getPhoto();
             }
         };
-        Profile profile = factory.createProfile(htmlTemplateFile, profileable);
+        Profile profile = ProfileFactory.createProfile(htmlTemplateFile, profileable);
         profile.setCountry(country.getName());
         profile.setFlagUrl(country.getFlag());
         for (int i = 0; i < country.getLanguages().size(); i++) {
@@ -86,9 +86,10 @@ public class Lobby {
         profile.writeAndOpen();
     }
 
-    public void chooseOption(){
-        this.option = sc.nextInt();
-        sc.nextLine();
+    public int chooseOption(){
+        int option = scanner.nextInt();
+        scanner.nextLine();
+        return option;
     }
 
     public void incrementPhase(){

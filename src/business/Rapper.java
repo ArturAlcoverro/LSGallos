@@ -4,7 +4,7 @@ import edu.salleurl.profile.Profileable;
 
 import java.util.Date;
 
-public class Rapper {
+public class Rapper implements Comparable<Rapper>{
     private String realName;
     private String stageName;
     private Date birth;
@@ -45,5 +45,15 @@ public class Rapper {
 
     public String getPhoto() {
         return photo;
+    }
+
+    @Override
+    public int compareTo(Rapper rapper) {
+        if(this.score>=rapper.score){
+            if(this.score == rapper.score)
+                return 0;
+            return -1;
+        }
+        return 1;
     }
 }

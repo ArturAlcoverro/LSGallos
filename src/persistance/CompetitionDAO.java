@@ -49,6 +49,10 @@ public class CompetitionDAO {
         );
     }
 
+    /**
+     * Actualitza el fitxer Json a partir de les dades de la competició
+     * @throws IOException Si el fitxer es inaccessible
+     */
     public void save() throws IOException {
         JsonElement element;
         JsonObject json = new JsonObject();
@@ -65,6 +69,11 @@ public class CompetitionDAO {
         Files.writeString(this.path, gson.toJson(json));
     }
 
+    /**
+     * @param nationality nom país.
+     * @return Un país amb les dades de la API.
+     * @throws IOException
+     */
     public Country getInfoCountry(String nationality) throws IOException{
         String url = "https://restcountries.eu/rest/v2/name/" + nationality;
         url = removeSpace(url);
@@ -118,56 +127,19 @@ public class CompetitionDAO {
         return withoutspaces;
     }
 
+    /**
+     * Afegeix un raper a la competicio i al fitxer Json
+     * @param rapper
+     * @throws IOException
+     */
     public void addRapper(Rapper rapper) throws IOException {
         this.competition.addRapper(rapper);
         save();
     }
 
-    @Override
-    public String toString() {
-        return this.competition.toString();
-    }
-
-    public boolean validateRapper(Rapper rapper){
-        return this.competition.validateRapper(rapper);
-    }
-
-    public boolean validateLog(String name){
-        return this.competition.validateLog(name);
-    }
-
-    public void showRanking(Rapper you){
-        this.competition.showRanking(you);
-    }
-
-    public Rapper getMyRapper(String name){
-        return this.competition.getMyRapper(name);
-    }
-
-    public Rapper getRapper(String name){
-        return this.competition.getRapper(name);
-    }
-
-    public void getChampion(){
-        this.competition.getChampion();
-    }
-
-    public Date getStartDate(){
-        return this.competition.getStartDate();
-    }
-
-    public Date getEndDate(){
-        return this.competition.getEndDate();
-    }
-
-    public String getName(){
-        return this.competition.getName();
-    }
-
-    public int getPhaseSize(){
-        return this.competition.getPhaseSize();
-    }
-
+    /**
+     * @return La competició
+     */
     public Competition getCompetition() {
         return competition;
     }

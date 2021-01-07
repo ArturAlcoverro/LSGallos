@@ -1,84 +1,153 @@
 package presentation;
 
+import business.Competition;
 import business.Rapper;
 import persistance.CompetitionDAO;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Menu {
 
-    private int option;
-    private Scanner sc;
+    private Scanner scanner;
+    private CompetitionDAO competitionDAO;
+    private Competition competition;
+    private Lobby lobby;
 
-    public Menu(){
-        sc = new Scanner(System.in);
+    public Menu(CompetitionDAO competitionDAO) {
+        this.competitionDAO = competitionDAO;
+        this.competition = competitionDAO.getCompetition();
+        this.scanner = new Scanner(System.in);
+        this.lobby = new Lobby(this.competition);
     }
 
-    public int printMenuRegister(){
+    public void start() throws IOException, ParseException {
+        Date date = new Date();
+        // Date date = new Date("2020/12/25"); //data per provar si funciona quan encara no ha començat la comepticio
+
+        printCompetition();
+        if (date.before(competition.getStartDate()))
+            menuRegister();
+        else if (date.after(competition.getStartDate()) && date.before(competition.getEndDate()))
+            menuLogin();
+        else competition.getChampion();
+    }
+
+    public int printMenuRegister() {
         System.out.println("The competition hasn’t started yet. Do you want to:\n");
         System.out.print("1. Register\n2. Leave\n\nChoose an option: ");
-        chooseOption();
-        return this.option;
+        return chooseOption();
     }
-    public int printMenuLogin(){
+
+    public void menuRegister() throws IOException, ParseException {
+        int option;
+
+        do {
+            option = printMenuRegister();
+            if(option == 1) registration();
+            else if(option !=2) System.out.println("Invalid option");
+        } while (option != 2);
+    }
+
+    public int printMenuLogin() {
         System.out.println("The competition has started. Do you want to:\n");
         System.out.print("1. Log in\n2. Leave\n\nChoose an option: ");
-        chooseOption();
-        return this.option;
+        return chooseOption();
     }
 
-    public void printMenuFinal(){}
+    public void menuLogin() throws IOException {
+        int option = printMenuLogin();
 
-    public void chooseOption(){
-        this.option = sc.nextInt();
-        sc.nextLine();
+        switch (option) {
+            case 1:
+                Rapper you = login();
+                do{
+                    option = lobby.showLobby(competitionDAO);
+                    switch (option) {
+                        case 1:
+                            if (lobby.getContPhase() > competition.getPhaseSize()) {
+                                System.out.println("Competition ended. You can't battle anyone else!");
+                            } else {
+                                //fer tot el tema batalles i tal
+                                lobby.incrementPhase();
+                            }
+                            break;
+                        case 2:
+                            lobby.showRanking(competitionDAO, you);
+                            break;
+                        case 3:
+                            lobby.profile(competitionDAO);
+                            break;
+                        case 4:
+                            break;
+                    }
+                }while(option!=4);
+                break;
+            case 2:
+                //options leaves
+                break;
+        }
     }
 
-    public void printCompetiton(CompetitionDAO dao){
-        System.out.print(dao.toString());
+    public void printMenuFinal() {
     }
 
-    public void Registration(CompetitionDAO dao) throws ParseException, IOException {
+    public int chooseOption() {
+        int option = scanner.nextInt();
+        scanner.nextLine();
+        return option;
+    }
+
+    public void printCompetition() {
+        System.out.print(competition.toString());
+    }
+
+    public void registration() throws ParseException, IOException {
         System.out.println("\n-----------------------------------------------------------------------");
         System.out.println("Please, enter your personal information: ");
         System.out.print("- Full name: ");
-        String name = sc.nextLine();
+        String name = scanner.nextLine();
         System.out.print("- Artistic name: ");
-        String artistic = sc.nextLine();
+        String artistic = scanner.nextLine();
         System.out.print("- Date of birth (dd/MM/YYYY): ");
-        String date = sc.nextLine();
+        String date = scanner.nextLine();
         System.out.print("- Country: ");
-        String country = sc.nextLine();
+        String country = scanner.nextLine();
         System.out.print("- Level: ");
-        int level = sc.nextInt();
-        sc.nextLine();
+        int level = scanner.nextInt();
+        scanner.nextLine();
         System.out.print("- Photo URL: ");
-        String url = sc.nextLine();
+        String url = scanner.nextLine();
 
         Rapper rapper = new Rapper(name, artistic, new SimpleDateFormat("dd/MM/yyyy").parse(date), country, level, url);
-        if(dao.validateRapper(rapper)){
+        if (competition.validateRapper(rapper)) {
             System.out.println("\nRegistration Complete!");
-            dao.addRapper(rapper);
-        }else{
+            competitionDAO.addRapper(rapper);
+        } else {
             System.out.println("\nRegistration not valid!");
         }
         System.out.println("-----------------------------------------------------------------------");
 
     }
 
-    public Rapper login(CompetitionDAO dao){
-        do{
+    public Rapper login() {
+        boolean exists;
+        String name;
+        Rapper rapper;
+
+        do {
             System.out.print("Enter your artístic name: ");
-            String name = sc.nextLine();
-            if(!dao.validateLog(name)){
+            name = scanner.nextLine();
+            exists = competition.validateLog(name);
+            if (!exists)
                 System.out.println("Bro, there's no \"" + name + "\" on ma' list.");
-            }else{
-                Rapper you = dao.getMyRapper(name);
-                return you;
-            }
-        }while(true);
+        } while (!exists);
+
+        rapper = competition.getMyRapper(name);
+        return rapper;
     }
+
 }
