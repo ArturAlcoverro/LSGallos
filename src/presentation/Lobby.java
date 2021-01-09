@@ -24,9 +24,9 @@ public class Lobby {
         this.contPhase = 1;
     }
 
-    public int showLobby(CompetitionDAO dao){
+    public int showLobby(Rapper you){
         System.out.println("-------------------------------------------------------------------------");
-        System.out.println("| "+ competition.getName() + " | Phase " + this.contPhase + "/" + competition.getPhaseSize() + " | Score: " + " | Next battle: ");
+        System.out.println("| "+ competition.getName() + " | Phase " + this.contPhase + "/" + competition.getPhaseSize() + " | Score: " + competition.getMyRapper(you.getStageName()).getScore() + " | Next battle: ");
         System.out.println("-------------------------------------------------------------------------");
         if(this.contPhase > competition.getPhaseSize()){
             System.out.print("1. Start the battle (deactivated)\n2. Show ranking\n3. Create profile\n4. Leave competition\n\nChoose an option: ");
@@ -36,7 +36,7 @@ public class Lobby {
         return chooseOption();
     }
 
-    public void showRanking(CompetitionDAO dao, Rapper you){
+    public void showRanking(Rapper you){
         System.out.println("--------------------------------------");
         System.out.println("| Pos. | Name\t\t\t\t | Score |");
         System.out.println("--------------------------------------");
@@ -44,18 +44,29 @@ public class Lobby {
     }
 
     public void profile(CompetitionDAO dao) throws IOException {
-        System.out.print("Enter the name of the rapper: ");
-        String name = scanner.nextLine();
-        Rapper rapper = competition.getRapper(name);
+        Rapper rapper;
+        do {
+            System.out.print("Enter the name of the rapper: ");
+            String name = scanner.nextLine();
+            rapper = competition.getRapper(name);
+        }while(rapper == null);
+
         System.out.println("Getting the information about their country of origin (" + rapper.getNationality() + ")...");
         Country country = dao.getInfoCountry(rapper.getNationality());
         System.out.println("Generating HTML file...");
-        generateHtml(country, rapper);
-        System.out.println("Done! The profile will open in your default browser.");
+
+        if (country != null) {
+            generateHtml(country, rapper);
+            System.out.println("Done! The profile will open in your default browser.");
+        }else{
+            System.out.println("Error generating the HTML file.");
+        }
     }
 
     public void generateHtml(Country country, Rapper rapper) throws IOException {
-        File htmlTemplateFile = new File("data/HTML/trueno.html");
+        String name = lowerCamelCase(rapper.getStageName());
+        String path = "data/HTML/" + name + ".html";
+        File htmlTemplateFile = new File(path);
         Profileable profileable = new Profileable() {
             @Override
             public String getName() {
@@ -84,6 +95,35 @@ public class Lobby {
             profile.addLanguage(country.getLanguages().get(i));
         }
         profile.writeAndOpen();
+    }
+
+    public String lowerCamelCase(String name){
+
+        StringBuffer result = new StringBuffer(name.length());
+        String strl = name.toLowerCase();
+        boolean bMustCapitalize = false;
+        for (int i = 0; i < strl.length(); i++)
+        {
+            char c = strl.charAt(i);
+            if (c >= 'a' && c <= 'z')
+            {
+                if (bMustCapitalize)
+                {
+                    result.append(strl.substring(i, i+1).toUpperCase());
+                    bMustCapitalize = false;
+                }
+                else
+                {
+                    result.append(c);
+                }
+            }
+            else
+            {
+                bMustCapitalize = true;
+            }
+        }
+        System.out.println(result);
+        return result.toString();
     }
 
     public int chooseOption(){

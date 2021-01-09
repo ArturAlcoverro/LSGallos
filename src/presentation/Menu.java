@@ -25,8 +25,8 @@ public class Menu {
     }
 
     public void start() throws IOException, ParseException {
-        Date date = new Date();
-        // Date date = new Date("2020/12/25"); //data per provar si funciona quan encara no ha començat la comepticio
+        //Date date = new Date();
+        Date date = new Date("2020/12/25"); //data per provar si funciona quan encara no ha començat la comepticio
 
         printCompetition();
         if (date.before(competition.getStartDate()))
@@ -65,7 +65,7 @@ public class Menu {
             case 1:
                 Rapper you = login();
                 do{
-                    option = lobby.showLobby(competitionDAO);
+                    option = lobby.showLobby(you);
                     switch (option) {
                         case 1:
                             if (lobby.getContPhase() > competition.getPhaseSize()) {
@@ -76,12 +76,15 @@ public class Menu {
                             }
                             break;
                         case 2:
-                            lobby.showRanking(competitionDAO, you);
+                            lobby.showRanking(you);
                             break;
                         case 3:
                             lobby.profile(competitionDAO);
                             break;
                         case 4:
+                            break;
+                        default:
+                            System.out.println("Option invalid!");
                             break;
                     }
                 }while(option!=4);
@@ -89,10 +92,10 @@ public class Menu {
             case 2:
                 //options leaves
                 break;
+            default:
+                System.out.println("Option invalid!");
+                break;
         }
-    }
-
-    public void printMenuFinal() {
     }
 
     public int chooseOption() {
