@@ -13,14 +13,23 @@ public class Country {
         this.languages = languages;
     }
 
+    /**
+     * @return Nom del país
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return String que conte la url de la foto de la bandera del pais
+     */
     public String getFlag() {
         return flag;
     }
 
+    /**
+     * @return Les llengues que es parlen en el país
+     */
     public ArrayList<String> getLanguages() {
         return languages;
     }

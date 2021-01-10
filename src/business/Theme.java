@@ -12,10 +12,16 @@ public class Theme {
         this.rhymes = rhymes;
     }
 
+    /**
+     * @return El nom del tema
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return Les rimes 
+     */
     public HashMap<String, ArrayList<String>> getRhymes() {
         return rhymes;
     }

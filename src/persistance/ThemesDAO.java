@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 
 public class ThemesDAO {
     private Path path;
@@ -38,5 +39,12 @@ public class ThemesDAO {
             System.out.println(themes.get(i).getRhymes().get("1").toString());
             System.out.println(themes.get(i).getRhymes().get("2").toString());
         }*/
+    }
+
+    /**
+     * @return Tema random de dins de l'array de temes
+     */
+    public Theme getRandomTheme(){
+        return themes.get(new Random().nextInt(themes.size()));
     }
 }
